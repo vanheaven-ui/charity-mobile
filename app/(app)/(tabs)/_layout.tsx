@@ -1,51 +1,80 @@
-import React from 'react';
-import { Tabs } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Text } from 'react-native';
+import React from "react";
+import { Tabs } from "expo-router";
+import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useAuth } from "../../../src/context/AuthContext";
 
-export default function TabsLayout() {
+export default function TabLayout() {
+  const { user } = useAuth();
+
+  // If the user object is not available, we can't determine the role.
+  // In a real scenario, this might show a loading screen or redirect.
+  // For this app, we'll assume the AuthProvider handles this gracefully.
+  if (!user) {
+    return null;
+  }
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#3b82f6', // blue-500
-        tabBarInactiveTintColor: '#a1a1aa', // zinc-400
+        tabBarActiveTintColor: "#0ea5e9", // sky-500
         tabBarStyle: {
-          backgroundColor: '#18181b', // zinc-900
-          borderTopColor: 'transparent',
-          paddingBottom: 2,
+          backgroundColor: "#18181b", // zinc-900
+          borderTopColor: "#3f3f46", // zinc-700
         },
         headerStyle: {
-          backgroundColor: '#18181b',
+          backgroundColor: "#18181b",
         },
+        headerTintColor: "#fff",
         headerTitleStyle: {
-          color: '#f4f4f5',
+          fontWeight: "bold",
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="view-dashboard" color={color} size={size} />
+          title: "Home",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="home" size={24} color={color} />
           ),
         }}
       />
-      <Tabs.Screen
-        name="proposals"
-        options={{
-          title: 'Proposals',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="file-document" color={color} size={size} />
-          ),
-        }}
-      />
+      {user.role === "Admin" && (
+        <Tabs.Screen
+          name="admin"
+          options={{
+            title: "Admin",
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="shield-crown"
+                size={24}
+                color={color}
+              />
+            ),
+          }}
+        />
+      )}
+      {user.role === "Partner" && (
+        <Tabs.Screen
+          name="proposals"
+          options={{
+            title: "Proposals",
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="file-document"
+                size={24}
+                color={color}
+              />
+            ),
+          }}
+        />
+      )}
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account" color={color} size={size} />
+          title: "Profile",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="user" size={24} color={color} />
           ),
         }}
       />

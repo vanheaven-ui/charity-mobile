@@ -1,53 +1,114 @@
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { useAuth } from "../src/context/AuthContext";
-import { Link } from "expo-router";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { useAuth } from '../src/context/AuthContext';
+import { loginUser } from '../src/services/api';
 
-export default function LoginScreen() {
+const LoginScreen = () => {
+  // Use the useAuth hook to get access to the login function
   const { login } = useAuth();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    // In a real app, you would make an API call here.
-    // For now, we'll simulate a successful login with a dummy token.
-    console.log("Simulating login...");
-    login("dummy-token-123");
+  const handleLogin = async () => {
+    // Start loading state
+    setLoading(true);
+    try {
+      // First, call the API service to authenticate the user
+      // The loginUser function should return a response with a token and user data
+      const response = await loginUser({ email, password });
+      
+      // Destructure the token and user data from the API response
+      const { token, user } = response;
+
+      // Now, call the login function from the context with both required arguments
+      await login(token, user);
+
+      // The context will handle storing the data and navigating the user
+    } catch (e: any) {
+      // Handle any login errors and display an alert to the user
+      Alert.alert('Login Failed', e.response?.data?.error || 'An error occurred during login.');
+    } finally {
+      // Always stop the loading state, regardless of success or failure
+      setLoading(false);
+    }
   };
 
   return (
-    <View className="flex-1 items-center justify-center bg-zinc-900 p-6">
-      <Text className="text-4xl font-bold text-white mb-8">Login</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Login</Text>
       <TextInput
-        className="w-full bg-zinc-800 text-white rounded-lg p-4 mb-4 text-lg"
+        style={styles.input}
         placeholder="Email"
-        placeholderTextColor="#888"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
       <TextInput
-        className="w-full bg-zinc-800 text-white rounded-lg p-4 mb-6 text-lg"
+        style={styles.input}
         placeholder="Password"
-        placeholderTextColor="#888"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
       <TouchableOpacity
-        className="w-full bg-sky-500 rounded-lg p-4 items-center mb-4"
+        style={styles.button}
         onPress={handleLogin}
+        disabled={loading}
       >
-        <Text className="text-white text-lg font-bold">Sign In</Text>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Login</Text>
+        )}
       </TouchableOpacity>
-      <Link href="/register" asChild>
-        <TouchableOpacity>
-          <Text className="text-sky-400 text-base">
-            Don't have an account? Register
-          </Text>
-        </TouchableOpacity>
-      </Link>
+      {/* You would typically add a link to a registration screen here */}
+      <TouchableOpacity onPress={() => console.log('Navigate to Register')}>
+        <Text style={styles.linkText}>Don't have an account? Register</Text>
+      </TouchableOpacity>
     </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: '#f8f8f8',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  input: {
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  linkText: {
+    marginTop: 15,
+    textAlign: 'center',
+    color: '#007bff',
+  },
+});
+
+export default LoginScreen;
