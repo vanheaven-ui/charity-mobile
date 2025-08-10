@@ -78,7 +78,7 @@ The app allows users to:
 | **State Management** | (React Context) |
 | **API Client**   | Axios                         |
 | **Notifications**| Expo Push Notifications       |
-| **Styling**      | _Specify your choice here_ (e.g., NativeBase, React Native Paper, custom stylesheets) |
+| **Styling**      | (Nativewindcss) |
 
 ---
 
