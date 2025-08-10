@@ -75,7 +75,7 @@ The app allows users to:
 |------------------|-------------------------------|
 | **Framework**    | React Native                  |
 | **Language**     | TypeScript                    |
-| **State Management** | _Specify your choice here_ (e.g., Redux Toolkit, Zustand, React Context) |
+| **State Management** | (React Context) |
 | **API Client**   | Axios                         |
 | **Notifications**| Expo Push Notifications       |
 | **Styling**      | _Specify your choice here_ (e.g., NativeBase, React Native Paper, custom stylesheets) |
